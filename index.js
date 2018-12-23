@@ -1,14 +1,18 @@
 const gm = require("gm").subClass({ imageMagick : true });
-const fs = require("fs");
+const s3 = require("./controllers/s3");
 
-gm("god-ganesh-images.jpg")
-    .resize(200, 200)
-    .toBuffer("png", (err, buffer) => {
-        if(err) {
-            console.log("error : ", err);
-        } else {
-            fs.writeFile('./resizedFile.png', buffer, () => {
-                console.log("Complete!");
-            });
-        }
+s3.getObject("ragedpanda-test-bucket", "god.jpg")
+    .then((data) => {
+        gm(data.Body)
+        .resize(200, 200)
+        .toBuffer("png", (err, data) => {
+            if(err) {
+                console.log("error : ", err);
+            } else {
+                s3.putObject(data, "ragedpanda-test-bucket", "god-resize.png");
+            }
+        });
+    })
+    .catch((err) => {
+        console.log("Error => " , err);
     });
