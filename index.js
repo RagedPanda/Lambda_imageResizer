@@ -1,7 +1,7 @@
 const gm = require("gm").subClass({ imageMagick : true });
 const s3 = require("./controllers/s3");
 
-s3.getObject("ragedpanda-test-bucket", "god.jpg")
+s3.getObject(process.env.S3_BUCKET_NAME, "god.jpg")
     .then((data) => {
         gm(data.Body)
         .resize(200, 200)
@@ -9,7 +9,7 @@ s3.getObject("ragedpanda-test-bucket", "god.jpg")
             if(err) {
                 console.log("error : ", err);
             } else {
-                s3.putObject(data, "ragedpanda-test-bucket", "god-resize.png");
+                s3.putObject(data, process.env.S3_BUCKET_NAME, "god-resize.png");
             }
         });
     })
